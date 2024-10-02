@@ -11,7 +11,6 @@ public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
@@ -19,6 +18,7 @@ public class CorsConfig {
         config.addAllowedHeader("*");//모든 header 허용
         config.addAllowedMethod("*");//모든 http 메서드 허용
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
 
         return new CorsFilter(source);
