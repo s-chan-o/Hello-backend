@@ -1,12 +1,19 @@
 package hellobackend.skills.config.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hellobackend.skills.config.auth.PrincipalDetails;
+import hellobackend.skills.model.User;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.io.IOException;
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter가 있음.
 //login 요청해서 username, password 전송하면 동작
@@ -21,9 +28,36 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("JwtAuthenticationFilter: 로그인 시도 중");
 
         //username, password를 받고 로그인 authenticationManager로 로그인을 시도
-        //PrincipalDetailsService가 호출 -> loadUserByUsername() 실행
-        //PrincipalDetails를 세션에 담고 (권한 관리를 위함) JWT토큰을 만든 후 응답
+        try {
 
-        return super.attemptAuthentication(request, response);
+            ObjectMapper om = new ObjectMapper();
+            User user = om.readValue(request.getInputStream(),User.class);
+            System.out.println(user);
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+
+
+            Authentication authentication =
+                    authenticationManager.authenticate(authenticationToken);
+
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            System.out.println("로그인 완료됨 :" + principalDetails.getUser().getUsername());
+
+            return authentication;
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    //attemptAuthentication 실행 후 인증이 정상적으로 되면 successfulAuthentication 함수 실행
+    //JWT 토큰 만든후 request 요청한 사용자에게 response 하면 됨
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
+        throws IOException, ServletException {
+        super.successfulAuthentication(request, response, chain, authResult);
     }
 }
