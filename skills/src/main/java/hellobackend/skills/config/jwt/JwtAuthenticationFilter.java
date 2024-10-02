@@ -19,59 +19,45 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.util.Date;
 
-//스프링 시큐리티에서 UsernamePasswordAuthenticationFilter가 있음.
-//login 요청해서 username, password 전송하면 동작
+// 스프링 시큐리티에서 UsernamePasswordAuthenticationFilter를 확장
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
-    // /login 요청을 하면 실행
+    // /login 요청을 처리
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
-        System.out.println("JwtAuthenticationFilter: 로그인 시도 중");
-
-        //username, password를 받고 로그인 authenticationManager로 로그인을 시도
         try {
-
             ObjectMapper om = new ObjectMapper();
-            User user = om.readValue(request.getInputStream(),User.class);
-            System.out.println(user);
+            User user = om.readValue(request.getInputStream(), User.class);
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 
+            return authenticationManager.authenticate(authenticationToken);
 
-            Authentication authentication =
-                    authenticationManager.authenticate(authenticationToken);
-
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            System.out.println("로그인 완료됨 :" + principalDetails.getUser().getUsername());
-
-            return authentication;
-
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
+            return null; // 예외가 발생하면 null을 반환
         }
-        return null;
     }
 
-
-    //attemptAuthentication 실행 후 인증이 정상적으로 되면 successfulAuthentication 함수 실행
-    //JWT 토큰 만든후 request 요청한 사용자에게 response 하면 됨
+    // 인증이 성공하면 호출
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 
-        //JWT토큰 생성 후 response에 담기
+        // JWT 토큰 생성
         String jwtToken = JWT.create()
                 .withSubject(principalDetails.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("id", principalDetails.getUser().getId())
                 .withClaim("username", principalDetails.getUser().getUsername())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX);
+        // JWT 토큰을 Response 헤더에 추가
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
     }
 }
