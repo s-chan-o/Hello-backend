@@ -24,7 +24,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
 
     @Bean
-    public BCryptPasswordEncoder PasswordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -35,15 +35,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
                 .addFilter(corsFilter) // CORS 필터 추가
                 .formLogin(form -> form.disable()) // 폼 로그인 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
-                .addFilter(new JwtAuthenticationFilter(authenticationManager))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager,userRepository))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), userRepository))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN") // 권한 설정
                         .requestMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
