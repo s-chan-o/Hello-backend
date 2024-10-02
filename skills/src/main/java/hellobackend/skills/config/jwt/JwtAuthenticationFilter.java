@@ -1,5 +1,7 @@
 package hellobackend.skills.config.jwt;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hellobackend.skills.config.auth.PrincipalDetails;
 import hellobackend.skills.model.User;
@@ -13,7 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import java.io.IOException;
+import java.util.Date;
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter가 있음.
 //login 요청해서 username, password 전송하면 동작
@@ -58,6 +62,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+
+        //JWT토큰 생성 후 response에 담기
+        String jwtToken = JWT.create()
+                .withSubject(principalDetails.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
+                .withClaim("id", principalDetails.getUser().getId())
+                .withClaim("username", principalDetails.getUser().getUsername())
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX);
     }
 }
