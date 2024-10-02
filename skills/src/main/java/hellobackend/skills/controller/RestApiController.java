@@ -10,47 +10,45 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class RestApiController {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder PasswordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("home")
-    public String home(){
+    public String home() {
         return "home";
     }
 
     @GetMapping("user")
-    public String user(Authentication authentication){
+    public String user(Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        System.out.println("principal : " + principal.getUser().getId());
-        System.out.println("principal : " + principal.getUser().getUsername());
-        System.out.println("principal : " + principal.getUser().getPassword());
+        System.out.println("UserID: " + principal.getUser().getId());
+        System.out.println("Username: " + principal.getUser().getUsername());
 
         return "user";
     }
 
-    //매니저 or 어드민 접근 가능
+    // 매니저 or 어드민 접근 가능
     @GetMapping("manager/reports")
     public String reports() {
         return "reports";
     }
 
-    //어드민 접근 가능
+    // 어드민 접근 가능
     @GetMapping("admin/users")
-    public List<User> users(){
+    public List<User> users() {
         return userRepository.findAll();
     }
 
     @PostMapping("join")
-    public String join(@RequestBody User user){
-        user.setPassword(PasswordEncoder.encode(user.getPassword()));
+    public String join(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles("ROLE_USER");
         userRepository.save(user);
-        return "회원가입완료";
+        return "회원가입 완료";
     }
 }
