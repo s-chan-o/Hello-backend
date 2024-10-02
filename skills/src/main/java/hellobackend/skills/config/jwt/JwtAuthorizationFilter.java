@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 // JWT 기반 인증을 위한 필터
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -53,8 +54,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             // 사용자 정보가 유효할 경우
             if (username != null) {
-                User user = userRepository.findByUsername(username);
-                if (user != null) {
+                Optional<User> userOptional = userRepository.findByUsername(username);
+
+                if (userOptional.isPresent()) {
+                    User user = userOptional.get();
                     PrincipalDetails principalDetails = new PrincipalDetails(user);
                     Authentication authentication =
                             new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
