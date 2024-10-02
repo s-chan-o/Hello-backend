@@ -1,14 +1,56 @@
 package hellobackend.skills.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import hellobackend.skills.config.auth.PrincipalDetails;
+import hellobackend.skills.model.User;
+import hellobackend.skills.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 
 @RestController
+@RequestMapping("api/v1")
+@RequiredArgsConstructor
 public class RestApiController {
 
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder PasswordEncoder;
 
     @GetMapping("home")
     public String home(){
         return "home";
+    }
+
+    @GetMapping("user")
+    public String user(Authentication authentication){
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+        System.out.println("principal : " + principal.getUser().getId());
+        System.out.println("principal : " + principal.getUser().getUsername());
+        System.out.println("principal : " + principal.getUser().getPassword());
+
+        return "user";
+    }
+
+    //매니저 or 어드민 접근 가능
+    @GetMapping("manager/reports")
+    public String reports() {
+        return "reports";
+    }
+
+    //어드민 접근 가능
+    @GetMapping("admin/users")
+    public List<User> users(){
+        return userRepository.findAll();
+    }
+
+    @PostMapping("join")
+    public String join(@RequestBody User user){
+        user.setPassword(PasswordEncoder.encode(user.getPassword()));
+        user.setRoles("ROLE_USER");
+        userRepository.save(user);
+        return "회원가입완료";
     }
 }
