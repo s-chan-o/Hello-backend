@@ -1,6 +1,8 @@
 package hellobackend.skills.config;
 
 import hellobackend.skills.config.jwt.JwtAuthenticationFilter;
+import hellobackend.skills.config.jwt.JwtAuthorizationFilter;
+import hellobackend.skills.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,7 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final CorsFilter corsFilter;
+    private final UserRepository userRepository;
 
     @Bean
     public BCryptPasswordEncoder PasswordEncoder() {
@@ -39,7 +42,8 @@ public class SecurityConfig {
                 .addFilter(corsFilter) // CORS 필터 추가
                 .formLogin(form -> form.disable()) // 폼 로그인 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
-                .addFilter(new JwtAuthenticationFilter(authenticationManager)) // JwtAuthenticationFilter 추가
+                .addFilter(new JwtAuthenticationFilter(authenticationManager))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager,userRepository))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN") // 권한 설정
                         .requestMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
