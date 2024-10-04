@@ -1,8 +1,8 @@
-package hellobackend.skills.controller;
+package hellobackend.skills.domain.controller;
 
-import hellobackend.skills.config.auth.PrincipalDetails;
-import hellobackend.skills.model.User;
-import hellobackend.skills.repository.UserRepository;
+import hellobackend.skills.domain.repository.UserRepository;
+import hellobackend.skills.global.auth.PrincipalDetails;
+import hellobackend.skills.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

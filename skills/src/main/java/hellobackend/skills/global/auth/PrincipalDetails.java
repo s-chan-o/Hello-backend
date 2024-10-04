@@ -1,6 +1,6 @@
-package hellobackend.skills.config.auth;
+package hellobackend.skills.global.auth;
 
-import hellobackend.skills.model.User;
+import hellobackend.skills.domain.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

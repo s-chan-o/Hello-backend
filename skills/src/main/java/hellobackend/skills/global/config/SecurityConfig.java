@@ -1,8 +1,8 @@
-package hellobackend.skills.config;
+package hellobackend.skills.global.config;
 
-import hellobackend.skills.config.jwt.JwtAuthenticationFilter;
-import hellobackend.skills.config.jwt.JwtAuthorizationFilter;
-import hellobackend.skills.repository.UserRepository;
+import hellobackend.skills.global.jwt.JwtAuthenticationFilter;
+import hellobackend.skills.global.jwt.JwtAuthorizationFilter;
+import hellobackend.skills.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

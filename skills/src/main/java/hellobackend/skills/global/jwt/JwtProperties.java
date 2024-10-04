@@ -1,4 +1,4 @@
-package hellobackend.skills.config.jwt;
+package hellobackend.skills.global.jwt;
 
 public interface JwtProperties {
 

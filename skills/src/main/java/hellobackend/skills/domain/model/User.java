@@ -1,4 +1,4 @@
-package hellobackend.skills.model;
+package hellobackend.skills.domain.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

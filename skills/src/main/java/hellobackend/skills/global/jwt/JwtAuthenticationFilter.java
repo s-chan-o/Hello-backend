@@ -1,10 +1,10 @@
-package hellobackend.skills.config.jwt;
+package hellobackend.skills.global.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hellobackend.skills.config.auth.PrincipalDetails;
-import hellobackend.skills.model.User;
+import hellobackend.skills.global.auth.PrincipalDetails;
+import hellobackend.skills.domain.model.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

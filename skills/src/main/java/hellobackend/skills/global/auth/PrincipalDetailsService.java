@@ -1,7 +1,7 @@
-package hellobackend.skills.config.auth;
+package hellobackend.skills.global.auth;
 
-import hellobackend.skills.model.User;
-import hellobackend.skills.repository.UserRepository;
+import hellobackend.skills.domain.model.User;
+import hellobackend.skills.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

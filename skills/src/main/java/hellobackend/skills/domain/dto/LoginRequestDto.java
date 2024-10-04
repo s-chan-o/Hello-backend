@@ -1,4 +1,4 @@
-package hellobackend.skills.dto;
+package hellobackend.skills.domain.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

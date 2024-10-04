@@ -1,6 +1,6 @@
-package hellobackend.skills.repository;
+package hellobackend.skills.domain.repository;
 
-import hellobackend.skills.model.User;
+import hellobackend.skills.domain.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
