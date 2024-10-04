@@ -25,7 +25,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotEmpty(message = "사용자 이름은 필수입니다.")
     private String username;
