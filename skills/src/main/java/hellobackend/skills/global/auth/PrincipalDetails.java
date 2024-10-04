@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 public class PrincipalDetails implements UserDetails {
 
