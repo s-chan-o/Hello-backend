@@ -1,22 +1,21 @@
 package hellobackend.skills.config.auth;
 
 import hellobackend.skills.model.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 public class PrincipalDetails implements UserDetails {
 
     private final User user;
-
-    public PrincipalDetails(User user) {
-        this.user = user;
-    }
 
     @Override
     public String getPassword() {
