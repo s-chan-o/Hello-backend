@@ -44,10 +44,11 @@ public class RestApiController {
         return userRepository.findAll();
     }
 
+
     @PostMapping("join")
     public String join(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles("ROLE_USER");
+        user.setRoles(List.of(User.Role.ROLE_USER)); // Role.ROLE_USER로 참조
         userRepository.save(user);
         return "회원가입 완료";
     }

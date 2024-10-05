@@ -1,7 +1,6 @@
 package hellobackend.skills.global.auth;
 
 import hellobackend.skills.domain.model.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,8 +47,8 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoleList().stream()
-                .map(SimpleGrantedAuthority::new)
+        return user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 }
