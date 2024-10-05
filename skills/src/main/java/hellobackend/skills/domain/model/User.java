@@ -35,19 +35,4 @@ public class User {
         USER,
         ADMIN
     }
-
-    public List<GrantedAuthority> getAuthorities() {
-        return getRoleList().stream()
-                .distinct()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .collect(Collectors.toList());
-    }
-
-    public List<Role> getRoleList() {
-        if (roles != null && !roles.isEmpty()) {
-            return roles;
-        }
-        return Collections.emptyList();
-    }
-
 }
