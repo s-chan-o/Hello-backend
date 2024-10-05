@@ -1,10 +1,6 @@
 package hellobackend.skills.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +30,13 @@ public class User {
     @NotEmpty(message = "비밀번호는 필수입니다.")
     private String password;
 
-    @Column(name = "roles")
-    private String roles; // USER, ADMIN
+    @ElementCollection
+    private List<Role> roles;
+
+    public enum Role {
+        USER,
+        ADMIN
+    }
 
     public List<GrantedAuthority> getAuthorities() {
         return getRoleList().stream()
@@ -43,10 +45,11 @@ public class User {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getRoleList() {
-        if (this.roles != null && this.roles.length() > 0) {
-            return Arrays.asList(this.roles.split(","));
+    public List<Role> getRoleList() {
+        if (roles != null && !roles.isEmpty()) {
+            return roles;
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
+
 }
