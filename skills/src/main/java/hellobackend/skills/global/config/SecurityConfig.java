@@ -23,11 +23,6 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     // AuthenticationManager 빈 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
