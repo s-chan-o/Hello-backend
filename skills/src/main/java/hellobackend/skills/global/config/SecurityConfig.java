@@ -2,6 +2,7 @@ package hellobackend.skills.global.config;
 
 import hellobackend.skills.global.jwt.JwtAuthenticationFilter;
 import hellobackend.skills.global.jwt.JwtAuthorizationFilter;
+import hellobackend.skills.global.jwt.JwtProvider;
 import hellobackend.skills.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +22,8 @@ public class SecurityConfig {
 
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
 
-    // AuthenticationManager 빈 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -31,19 +32,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
-                .addFilter(corsFilter) // CORS 필터 추가
-                .formLogin(form -> form.disable()) // 폼 로그인 비활성화
-                .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), userRepository))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilter(corsFilter)
+                .formLogin(form -> form.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtProvider))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), userRepository, jwtProvider))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN") // 권한 설정
-                        .requestMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll() // 그 외 요청 허용
-                );
+                        .requestMatchers("/api/v1/user/**").hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers("/api/v1/manager/**").hasAnyRole("ROLE_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ROLE_ADMIN")
+                        .anyRequest().permitAll());
 
         return http.build();
     }
