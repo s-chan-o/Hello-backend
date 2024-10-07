@@ -40,9 +40,9 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtProvider))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), userRepository, jwtProvider))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/v1/user/**").hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")
-                        .requestMatchers("/api/v1/manager/**").hasAnyRole("ROLE_MANAGER", "ROLE_ADMIN")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                        .requestMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll());
 
         return http.build();
