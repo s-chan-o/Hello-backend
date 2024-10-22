@@ -2,6 +2,7 @@ package hellobackend.skills.global.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import hellobackend.skills.global.auth.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,10 +23,14 @@ public class JwtProvider {
     }
 
     public String validateAndGetUsername(String token) {
-        return JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
-                .build()
-                .verify(token)
-                .getClaim("username")
-                .asString();
+        try {
+            return JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
+                    .build()
+                    .verify(token)
+                    .getClaim("username")
+                    .asString();
+        } catch (JWTVerificationException e) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
     }
 }
