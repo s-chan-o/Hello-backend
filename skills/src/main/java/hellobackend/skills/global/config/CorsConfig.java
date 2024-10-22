@@ -17,7 +17,6 @@ public class CorsConfig {
         config.addAllowedOriginPattern("*");//origin에서 오는 요청 허용
         config.addAllowedHeader("*");//모든 header 허용
         config.addAllowedMethod("*");//모든 http 메서드 허용
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
 
